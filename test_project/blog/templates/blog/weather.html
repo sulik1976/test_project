@@ -1,0 +1,52 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+  <h3>Введите название города</h3>
+  <main>
+    <div class="form-container">
+      <form action="{% url 'weather' %}" method="POST">
+        {% csrf_token %}
+        {{ form.name }}
+        <button type="submit">Получить погоду</button>
+      </form>
+    </div>
+    <div id="weatherInfo">
+      {% if weather_info %}
+        <div class="weather-info">
+          <div class="row">
+            <div class="weather-details">
+              <b>Город: </b>{{ weather_info.city }}<br>
+              <b>Температура: </b>{{ weather_info.temp }}°C
+            </div>
+            <div class="weather-icon">
+              <img src="http://openweathermap.org/img/w/{{ weather_info.icon }}.png" alt="Фото погоды" class="img-thumbnail">
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </main>
+  <div class="info-container">
+    <div class="info">
+      <h2>Информация</h2>
+      {% for info in all_info %}
+        <div class="weather-info">
+          <div class="row">
+            <div class="weather-details">
+              <b>Город: </b>{{ info.city }}<br>
+              <b>Температура: </b>{{ info.temp }}°C
+            </div>
+            <div class="weather-icon">
+              <img src="http://openweathermap.org/img/w/{{ info.icon }}.png" alt="Фото погоды" class="img-thumbnail">
+              <form method="POST" action="{% url 'remove_city' info.city %}">
+              {% csrf_token %}
+              <button type="submit">Удалить</button>
+            </form>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+  
+{% endblock %}

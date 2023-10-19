@@ -1,0 +1,193 @@
+/* CSS styles for the template */
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: powderblue; /* Change to your desired color */
+    color: rgb(88, 84, 84);
+  }
+  
+  .header {
+    background-color: rgb(21, 22, 22);
+    color: #fff;
+    padding: 10px;
+  }
+  
+  .wrap {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  
+  .mainmenu {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .mainmenu li {
+    display: inline-block;
+    margin-right: 15px;
+  }
+  
+  .mainmenu li a {
+    color: #fff;
+    text-decoration: none;
+  }
+
+  
+  .mainmenu li a:hover {
+    color: #eb1a1a;
+
+  }
+
+  h1 {
+    text-align: center;
+    color: rgb(27, 25, 25);
+  }
+  
+  .content-wrap {
+    display: flex;
+  }
+  
+  .sidebar {
+    background-color: #f2f2f2;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    flex: 0 0 200px;
+    margin-right: 20px;
+  }
+  
+  .sidebar li {
+    list-style-type: none;
+    margin: 5px 0;
+  }
+  
+  .sidebar li.selected {
+    font-weight: bold;
+    background-color: #f2f2f2;
+  }
+  
+  .sidebar a {
+    text-decoration: none;
+    color: #333;
+  }
+  
+  .sidebar a:hover {
+    color: #00aaff;
+  }
+  
+  .blogs {
+    flex: 1;
+    background-color: rgb(243, 250, 247);
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .blogs h2 {
+    color: #333;
+  }
+  
+  .blogs p {
+    color: rgb(27, 25, 25);
+    line-height: 1.5;
+  }
+  
+  .img-article-left {
+    width: 30%; /* Установите ширину, которую вы хотите */
+    float: left;
+    margin: 10px;
+    padding-bottom: 2px;
+    
+}
+
+form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+input[type="text"] {
+  padding: 5px;
+  font-size: 16px;
+}
+
+button {
+  padding: 5px 10px;
+  font-size: 16px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.weather-info {
+  background-color: rgb(228, 194, 194);
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.weather-details {
+  flex: 1;
+}
+
+.weather-icon {
+  flex: 0 0 50px;
+  text-align: center;
+}
+
+.img-thumbnail {
+  max-width: 100%;
+  height: auto;
+}
+
+.info-container {
+  background-color: #d9e9eb;
+  padding: 20px;
+}
+
+.info {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.row:last-child {
+  margin-bottom: 0;
+}
+
+.b {
+  font-weight: bold;
+}
+.footer {
+  background-color: #333; /* цвет фона */
+  color: #fff; /* цвет текста */
+  font-size: 15px;
+  text-align: center; /* выравнивание текста по центру */
+  padding: 0; /* внутренние отступы */
+  position: fixed; /* фиксированное позиционирование */
+  left: 0; /* выравнивание по левому краю */
+  bottom: 0; /* выравнивание по нижнему краю */
+  height: 30px; 
+  width: 100%; /* ширина 100% */
+  box-sizing: border-box; /* учитывание границ и отступов в общей ширине и высоте */
+}
+
+
+.logo img {
+  width: 150%; /* ширина изображения */
+  height: auto; /* высота изображения */
+}
+
+
+.display {
+  min-width: 200px;
+  font-size: 16px;
+}
