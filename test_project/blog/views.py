@@ -22,12 +22,14 @@ menu = [
 
 class WeatherView(View):
     template_name = 'blog/weather.html'
-    appid = '01350689607c6e0bfc1b75e56ccc05af'  # Replace with your valid API key
+    appid = 'e06c8a2f03607612ef71038cc5aa74ba'  # Replace with your valid API key
     url = 'https://api.openweathermap.org/data/2.5/weather?q={}&units=metric&appid=' + appid
 
     def get(self, request):
         form = CityForm()
         cities = City.objects.all()
+        user_menu = menu.copy()
+        user_menu.pop(3)
         all_cities = []
         for city in cities:
             res = requests.get(self.url.format(city.name)).json()
@@ -37,7 +39,7 @@ class WeatherView(View):
                 'icon': res['weather'][0]['icon']
             }
             all_cities.append(city_info)
-        context = {'all_info': all_cities, 'form': form, 'menu': menu, 'title': 'Погода'}
+        context = {'all_info': all_cities, 'form': form, 'menu': user_menu, 'title': 'Погода в вашем городе'}
         return render(request, self.template_name, context)
 
 
@@ -57,11 +59,13 @@ def remove_city(request, city_name):
 def index(request):
     posts = Blog.objects.all()
     cats = Category.objects.all()
+    user_menu = menu.copy()
+    user_menu.pop(0)
  
     context = {
         'posts': posts,
         'cats': cats,
-        'menu': menu,
+        'menu': user_menu,
         'title': 'Главная страница',
         'cat_selected': 0,
     }
@@ -128,12 +132,13 @@ def contact(request):
 def show_category(request, cat_id):
     posts = Blog.objects.filter(cat_id=cat_id)
     cats = Category.objects.all()
+    category = Category.objects.get(id=cat_id)
  
     context = {
         'posts': posts,
         'cats': cats,
         'menu': menu,
-        'title': 'Отображение по категориям',
+        'title': category,
         'cat_selected': cat_id,
     }
  

@@ -70,12 +70,13 @@ body {
   }
   
   .sidebar a {
+    font-size: 18px;
     text-decoration: none;
-    color: #333;
+    color: rgb(10, 10, 10);
   }
   
   .sidebar a:hover {
-    color: #00aaff;
+    color: #6340e2;
   }
   
   .blogs {
