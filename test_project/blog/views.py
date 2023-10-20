@@ -57,7 +57,7 @@ def remove_city(request, city_name):
 
 
 def index(request):
-    posts = Blog.objects.all()
+    posts = Blog.objects.filter(is_published=True).order_by('-time_create')
     cats = Category.objects.all()
     user_menu = menu.copy()
     user_menu.pop(0)
@@ -68,6 +68,7 @@ def index(request):
         'menu': user_menu,
         'title': 'Главная страница',
         'cat_selected': 0,
+        
     }
  
     return render(request, 'blog/index.html', context=context)
