@@ -1,17 +1,20 @@
-from smtplib import SMTPResponseException
-import requests
 from django.shortcuts import render, redirect
 from django.views import View
+from django.views.generic import ListView
 from .forms import CityForm, AddPostForm
+from django.views.generic import TemplateView
+from django.utils.decorators import method_decorator
 from .models import City, Blog, Category
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.contrib.auth import login, logout, authenticate, get_user_model
+from django.contrib.auth import login, logout, authenticate
 from django.db import IntegrityError
-from django.contrib.auth.models import User
-from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
+from smtplib import SMTPResponseException
+from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
+import requests
 
 
 
@@ -67,100 +70,98 @@ class RemoveCityView(View):
         return redirect('weather')
 
 
-def index(request):
-    posts = Blog.objects.filter(is_published=True).order_by('-time_create')
-    cats = Category.objects.all()
-    user_menu = menu.copy()
-    user_menu.pop(0)
- 
-    context = {
-        'posts': posts,
-        'cats': cats,
-        'menu': user_menu,
-        'title': 'Главная страница',
-        'cat_selected': 0,
-        
-    }
- 
-    return render(request, 'blog/index.html', context=context)
+class IndexView(ListView):
+    model = Blog
+    template_name = 'blog/index.html'
+    context_object_name = 'posts'
+    ordering = ['-time_create']
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['cats'] = Category.objects.all()
+        context['menu'] = menu.copy()
+        context['menu'].pop(0)
+        context['title'] = 'Главная страница'
+        context['cat_selected'] = 0
+        return context
 
 
+class AboutView(TemplateView):
+    template_name = 'blog/about.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['posts'] = Blog.objects.all()
+        context['cats'] = Category.objects.all()
+        context['menu'] = menu.copy()
+        context['menu'].pop(1)
+        context['title'] = 'О сайте'
+        context['cat_selected'] = 0
+        return context
 
 
+class ShowPostView(View):
+    def get(self, request, post_slug):
+        post = get_object_or_404(Blog, slug=post_slug)
+        context = {
+            'post': post,
+            'menu': menu,
+            'title': post.title,
+            'cat_selected': 1,
+        }
 
-def about(request):
-    posts = Blog.objects.all()
-    cats = Category.objects.all()
-    user_menu = menu.copy()
-    user_menu.pop(1)
- 
-    context = {
-        'posts': posts,
-        'cats': cats,
-        'menu': user_menu,
-        'title': 'О сайте',
-        'cat_selected': 0,
-    }
- 
-    return render(request, 'blog/about.html', context=context)
-    
+        return render(request, 'blog/post.html', context=context)
 
-def show_post(request, post_slug):
-    post = get_object_or_404(Blog, slug=post_slug)
-    context = {
-        'post': post,
-        'menu': menu,
-        'title': post.title,
-        'cat_selected': 1,
-    }
- 
-    return render(request, 'blog/post.html', context=context)
-    
 
-@login_required(login_url='register')
-def add_page(request):
-    user_menu = menu.copy()
-    user_menu.pop(2)
-    context = {
-    'menu': user_menu,
-    'title': 'Добавление статьи',
-    }
-    if request.method == 'POST':
+@method_decorator(login_required(login_url='register'), name='dispatch')
+class AddPageView(View):
+    def get(self, request):
+        user_menu = menu.copy()
+        user_menu.pop(2)
+        context = {
+            'menu': user_menu,
+            'title': 'Добавление статьи',
+        }
+        form = AddPostForm()
+        return render(request, 'blog/addpage.html', {**{'form': form}, **context})
+
+    def post(self, request):
         form = AddPostForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             return redirect('home')
-    else:
-        form = AddPostForm()
-        
-    return render(request, 'blog/addpage.html', {**{'form': form}, **context})
-
-
-
-def contact(request):
-    return SMTPResponseException("Обратная связь")
+        else:
+            user_menu = menu.copy()
+            user_menu.pop(2)
+            context = {
+                'menu': user_menu,
+                'title': 'Добавление статьи',
+            }
+            return render(request, 'blog/addpage.html', {**{'form': form}, **context})
  
 
-def show_category(request, cat_id):
-    posts = Blog.objects.filter(cat_id=cat_id)
-    cats = Category.objects.all()
-    category = Category.objects.get(id=cat_id)
+class ShowCategoryView(View):
+    def get(self, request, cat_id):
+        posts = Blog.objects.filter(cat_id=cat_id)
+        cats = Category.objects.all()
+        category = Category.objects.get(id=cat_id)
  
-    context = {
-        'posts': posts,
-        'cats': cats,
-        'menu': menu,
-        'title': category,
-        'cat_selected': cat_id,
-    }
+        context = {
+            'posts': posts,
+            'cats': cats,
+            'menu': menu,
+            'title': category,
+            'cat_selected': cat_id,
+        }
  
-    return render(request, 'blog/index.html', context=context)    
+        return render(request, 'blog/index.html', context=context)   
 
 
-def register(request):
-    if request.method == 'GET':
+class RegisterView(View):
+    def get(self, request):
         return render(request, 'blog/register.html', {'menu': menu, 'title': 'Регистрация', 'form': UserCreationForm(),})
-    else:
+
+    def post(self, request):
         if request.POST['password1'] == request.POST['password2']:
             try:
                 user = User.objects.create_user(
@@ -180,14 +181,11 @@ def register(request):
                            'error': 'Пароли не совпали!'})
 
 
-
-
-
-
-def login_view(request):  
-    if request.method == 'GET':
+class LoginView(View):
+    def get(self, request):
         return render(request, 'blog/login.html', {'form': AuthenticationForm()})
-    else:
+
+    def post(self, request):
         user = authenticate(request, username=request.POST['username'],
                             password=request.POST['password'])
 
@@ -200,6 +198,7 @@ def login_view(request):
             return redirect('home')
 
 
-def logout_view(request):
-    logout(request)
-    return redirect('home')                           
+class LogoutView(View):
+    def get(self, request):
+        logout(request)
+        return redirect('home')

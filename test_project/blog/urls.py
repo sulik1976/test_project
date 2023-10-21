@@ -1,20 +1,17 @@
 from django.urls import path
-from .views import WeatherView
-from .views import RemoveCityView
 from . import views 
 from .views import *
 
 
 urlpatterns = [
-    path('', index, name='home'),
-    path('about/', about, name='about'),
+    path('', IndexView.as_view(), name='home'),
+    path('about/', AboutView.as_view(), name='about'),
     path('weather/', WeatherView.as_view(), name='weather'),
-    path('post/<slug:post_slug>/', show_post, name='post'),
-    path('addpage/', add_page, name='add_page'),
-    path('contact/', contact, name='contact'),
-    path('register/', views.register, name='register'),
-    path('login/', views.login_view, name='login'),
-    path('logout/', logout_view, name='logout'),
-    path('category/<int:cat_id>/', show_category, name='category'),
+    path('post/<str:post_slug>/', views.ShowPostView.as_view(), name='post'),
+    path('addpage/', views.AddPageView.as_view(), name='add_page'),
+    path('register/', views.RegisterView.as_view(), name='register'),
+    path('login/', views.LoginView.as_view(), name='login'),
+    path('logout/', views.LogoutView.as_view(), name='logout'),
+    path('category/<int:cat_id>/', views.ShowCategoryView.as_view(),name='category'),
     path('remove_city/<str:city_name>/', RemoveCityView.as_view(), name='remove_city'),
 ]
