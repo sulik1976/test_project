@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import WeatherView
+from .views import RemoveCityView
 from . import views 
 from .views import *
 
@@ -15,5 +16,5 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('logout/', logout_view, name='logout'),
     path('category/<int:cat_id>/', show_category, name='category'),
-    path('remove_city/<str:city_name>/', views.remove_city, name='remove_city'),
+    path('remove_city/<str:city_name>/', RemoveCityView.as_view(), name='remove_city'),
 ]

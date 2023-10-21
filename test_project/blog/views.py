@@ -11,6 +11,8 @@ from django.contrib.auth.models import User
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, JsonResponse
+from django.core.exceptions import ObjectDoesNotExist
+
 
 
 menu = [
@@ -32,16 +34,25 @@ class WeatherView(View):
         user_menu.pop(3)
         all_cities = []
         for city in cities:
-            res = requests.get(self.url.format(city.name)).json()
-            city_info = {
-                'city': city.name,
-                'temp': res['main']['temp'],
-                'icon': res['weather'][0]['icon']
-            }
-            all_cities.append(city_info)
+            try:
+                res = requests.get(self.url.format(city.name)).json()
+                if 'main' in res:
+                    city_info = {
+                        'city': city.name,
+                        'temp': res['main']['temp'],
+                        'icon': res['weather'][0]['icon']
+                    }
+                    all_cities.append(city_info)
+                else:
+                    all_cities.append({
+                        'city': city.name,
+                        'error': 'Ошибка: такого города нет'
+                    })
+            except ObjectDoesNotExist:
+                
+                pass
         context = {'all_info': all_cities, 'form': form, 'menu': user_menu, 'title': 'Погода в вашем городе'}
         return render(request, self.template_name, context)
-
 
     def post(self, request):
         form = CityForm(request.POST)
@@ -49,11 +60,11 @@ class WeatherView(View):
             form.save()
         return redirect('weather')
 
-
-def remove_city(request, city_name):
-        if request.method == 'POST':
-            City.objects.get(name=city_name).delete()
-            return redirect('weather')        
+class RemoveCityView(View):
+    def post(self, request, *args, **kwargs):
+        city_name = kwargs.get('city_name')
+        City.objects.filter(name=city_name).delete()
+        return redirect('weather')
 
 
 def index(request):
@@ -173,7 +184,7 @@ def register(request):
 
 
 
-def login_view(request):  # Изменено имя функции
+def login_view(request):  
     if request.method == 'GET':
         return render(request, 'blog/login.html', {'form': AuthenticationForm()})
     else:

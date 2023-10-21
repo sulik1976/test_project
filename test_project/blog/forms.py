@@ -10,6 +10,7 @@ from django import forms
 
 
 class CityForm(ModelForm):
+    name = forms.CharField(initial='')
     class Meta:
         model = City
         fields = ['name']
@@ -17,7 +18,6 @@ class CityForm(ModelForm):
             'class': 'search-container',
             'name': 'city',
             'id': 'city',
-            'placeholder': 'Введите город'
         })}
 
 
