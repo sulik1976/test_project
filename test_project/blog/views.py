@@ -14,6 +14,9 @@ from django.core.exceptions import ObjectDoesNotExist
 from smtplib import SMTPResponseException
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
+from .models import Comment
+from .forms import CommentForm
+from django.http import HttpResponseForbidden
 import requests
 
 
@@ -106,16 +109,34 @@ class AboutView(TemplateView):
 
 
 class ShowPostView(View):
-    def get(self, request, post_slug):
-        post = get_object_or_404(Blog, slug=post_slug)
-        context = {
-            'post': post,
-            'menu': menu,
-            'title': post.title,
-            'cat_selected': 1,
-        }
+       def get(self, request, post_slug):
+           post = get_object_or_404(Blog, slug=post_slug)
+           comments = Comment.objects.filter(post=post)
+           form = CommentForm()
+           context = {
+               'post': post,
+               'comments': comments,
+               'form': form,
+               'menu': menu,
+               'title': post.title,
+               'cat_selected': 1,
+           }
 
-        return render(request, 'blog/post.html', context=context)
+           return render(request, 'blog/post.html', context=context)
+
+       def post(self, request, post_slug):
+        post = get_object_or_404(Blog, slug=post_slug)
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            if request.user.is_authenticated:
+                comment = form.save(commit=False)
+                comment.user = request.user
+                comment.post = post
+                comment.save()
+            else:
+                return HttpResponseForbidden("Вы должны быть зарегистрированы и войти в систему, чтобы добавить комментарий.")
+        return redirect('post', post_slug=post_slug)
+
 
 
 @method_decorator(login_required(login_url='register'), name='dispatch')

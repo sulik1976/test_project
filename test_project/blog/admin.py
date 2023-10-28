@@ -22,7 +22,7 @@ class CategoryAdmin(admin.ModelAdmin):
 admin.site.register(City)
 admin.site.register(Blog, BlogAdmin)
 admin.site.register(Category, CategoryAdmin)
-admin.site.register(User)
+admin.site.register(UserProfile)
 
 
 

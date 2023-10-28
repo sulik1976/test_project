@@ -1,6 +1,6 @@
+from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
-from django.contrib.auth.models import User
 
 class Blog(models.Model):
     title = models.CharField(max_length=255)
@@ -12,7 +12,6 @@ class Blog(models.Model):
     is_published = models.BooleanField(default=True)
     cat = models.ForeignKey('Category', on_delete=models.PROTECT, null=True)
     
-
     def __str__(self):
         return self.title
 
@@ -24,7 +23,6 @@ class Category(models.Model):
     name = models.CharField(max_length=100, db_index=True)
     slug = models.SlugField(max_length=255, unique=True, db_index=True, verbose_name="URL")
    
- 
     def __str__(self):
         return self.name
 
@@ -36,7 +34,6 @@ class City(models.Model):
     name = models.CharField(max_length=100, default='Unknown')
     city_id = models.AutoField(primary_key=True)
     
-
     def __str__(self):
         return self.name
 
@@ -44,13 +41,19 @@ class City(models.Model):
         return reverse('delete_city', kwargs={'city_id': self.city_id})
 
 
-
-class User(models.Model):
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
-    username = models.CharField(max_length=255)
-    password = models.CharField(max_length=255)
 
     def __str__(self):
         return self.title
 
 
+class Comment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    post = models.ForeignKey(Blog, on_delete=models.CASCADE)
+    text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.text

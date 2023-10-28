@@ -4,6 +4,8 @@ from .models import Blog
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django import forms
+from .models import Comment
+
 
 
 
@@ -50,3 +52,8 @@ class AddPostForm(forms.ModelForm):
         
         return title
 
+
+class CommentForm(forms.ModelForm):
+       class Meta:
+           model = Comment
+           fields = ('text',)

@@ -9,4 +9,15 @@
 {% endif %}
  
 {{post.content|linebreaks}}
+
+{% for comment in comments %}
+<p class="comment"><span class="username">{{ comment.user.username }}:</span> {{ comment.text }}</p>
+{% endfor %}
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Отправить комментарий</button>
+</form>
+
 {% endblock %}
