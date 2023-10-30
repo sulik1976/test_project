@@ -1,15 +1,32 @@
 {% extends 'blog/base.html' %}
+
 {% block content %}
-<h1>{{title}}</h1>
+    <h1>{{ title }}</h1>
 
-<form method="post">
-    {% csrf_token %}
+    <form method="post">
+        {% csrf_token %}
         <div class="form-error">{{ form.non_field_errors }}</div>
-    {% for f in form %}
-<p><label class="form-label" for="{{ f.id_for_label }}">{{f.label}}: </label>{{ f }}</p>
-<div class="form-error">{{ f.errors }}</div>
-    {% endfor %}
-    <button type="submit">Войти</button>
-</form>
 
+        {% for f in form %}
+            {% if f.name == 'username' %}
+                <p>
+                    <label class="form-label" for="{{ f.id_for_label }}">{{ f.label }}: </label>
+                    {{ f }}
+                </p>
+                <div class="form-error">{{ f.errors }}</div>
+            {% endif %}
+        {% endfor %}
+
+        {% for f in form %}
+            {% if f.name == 'password' %}
+                <p>
+                    <label class="form-label" for="{{ f.id_for_label }}">{{ f.label }}: </label>
+                    {{ f }}
+                </p>
+                <div class="form-error">{{ f.errors }}</div>
+            {% endif %}
+        {% endfor %}
+
+        <button type="submit">Войти</button>
+    </form>
 {% endblock %}

@@ -9,12 +9,12 @@
 {% endif %}
  
 {{post.content|linebreaks}}
-
+<p>Комментарии</p>
 {% for comment in comments %}
-<p class="comment"><span class="username">{{ comment.user.username }}:</span> {{ comment.text }}</p>
+        <p class="comment"><span class="username">{{ comment.created_at }}:{{ comment.user.username }}:</span>{{ comment.text }}: </p>
 {% endfor %}
 
-<form method="post">
+<form class="comment-form" method="post">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Отправить комментарий</button>

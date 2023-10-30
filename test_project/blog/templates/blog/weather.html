@@ -33,11 +33,15 @@
         <div class="weather-info">
           <div class="row">
             <div class="weather-details">
-              <b>Город: </b>{{ info.city }}<br>
+              <b>Город: </b><span class="weather-x">{{ info.city }}</span><br>
               {% if info.error %}
                 <p>{{ info.error }}</p>
               {% else %}
-                <b>Температура: </b>{{ info.temp }}°C
+                <b>Текущая погода: </b><span class="weather-x">{{ info.description }}</span> <br>
+                <b>Температура: </b></b><span class="weather-x">{{ info.temp }}°C</span><br>
+                <b>Скорость ветра: </b></b><span class="weather-x">{{ info.wind_speed }}м/с</span><br>
+                <b>Влажность: </b></b><span class="weather-x">{{ info.humidity }}%</span><br>
+                <b>Давление: </b></b><span class="weather-x">{{ info.pressure }} hPa</span><br>
               {% endif %}
             </div>
             <div class="weather-icon">

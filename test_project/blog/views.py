@@ -31,7 +31,8 @@ menu = [
 class WeatherView(View):
     template_name = 'blog/weather.html'
     appid = 'e06c8a2f03607612ef71038cc5aa74ba'  # Replace with your valid API key
-    url = 'https://api.openweathermap.org/data/2.5/weather?q={}&units=metric&appid=' + appid
+    url = 'https://api.openweathermap.org/data/2.5/weather?q={}&units=metric&lang=ru&appid=' + appid
+
 
     def get(self, request):
         form = CityForm()
@@ -46,7 +47,11 @@ class WeatherView(View):
                     city_info = {
                         'city': city.name,
                         'temp': res['main']['temp'],
-                        'icon': res['weather'][0]['icon']
+                        'icon': res['weather'][0]['icon'],
+                        'description': res['weather'][0]['description'],
+                        'humidity': res['main']['humidity'],
+                        'pressure': res['main']['pressure'],
+                        'wind_speed': res['wind']['speed']
                     }
                     all_cities.append(city_info)
                 else:
@@ -134,7 +139,7 @@ class ShowPostView(View):
                 comment.post = post
                 comment.save()
             else:
-                return HttpResponseForbidden("Вы должны быть зарегистрированы и войти в систему, чтобы добавить комментарий.")
+                return redirect('register') 
         return redirect('post', post_slug=post_slug)
 
 
@@ -209,7 +214,10 @@ class RegisterView(View):
 
 class LoginView(View):
     def get(self, request):
-        return render(request, 'blog/login.html', {'form': AuthenticationForm()})
+        context = {
+            'menu': menu,
+        }
+        return render(request, 'blog/login.html', {**{'form': AuthenticationForm()}, **context})
 
     def post(self, request):
         user = authenticate(request, username=request.POST['username'],
