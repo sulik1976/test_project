@@ -288,3 +288,7 @@ ul.list-articles li {
 	box-shadow: none; 
 }
 
+.page-num-selected {
+  background-color: powderblue;  
+  color: white; 
+}
